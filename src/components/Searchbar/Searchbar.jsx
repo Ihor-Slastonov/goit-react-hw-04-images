@@ -1,6 +1,7 @@
+import PropTypes from 'prop-types';
+
 import { Component } from 'react';
 import { toast } from 'react-hot-toast';
-import PropTypes from 'prop-types';
 import { BsSearch } from 'react-icons/bs';
 
 import { Header, SearchForm, SearchBtn, SearchInput } from './Searchbar.styled';
