@@ -30,7 +30,6 @@ export class ImageGallery extends Component {
           loadMore: false,
           pageNumber: 1,
         });
-        console.log(this.state.pageNumber);
         await this.fetchGallery();
       } catch (error) {
         console.log(error);
@@ -114,7 +113,7 @@ export class ImageGallery extends Component {
                   key={image.id}
                   url={image.webformatURL}
                   tag={image.tags}
-                  largeUrl={image.largeImageURL}
+                  largeImageUrl={image.largeImageURL}
                 />
               );
             })}

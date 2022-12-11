@@ -8,26 +8,32 @@ export class ImageGalleryItem extends Component {
   static propTypes = {
     url: PropTypes.string.isRequired,
     tag: PropTypes.string.isRequired,
-    largeUrl: PropTypes.string.isRequired,
+    largeImageUrl: PropTypes.string.isRequired,
   };
   state = {
-    isOpen: false
-  }
+    showModal: false,
+  };
 
-  toggleModal = ()=>{
+  toggleModal = () => {
     this.setState(prevState => ({
-      isOpen: !prevState.isOpen
+      showModal: !prevState.showModal,
     }));
-  }
+  };
 
   render() {
-    const { url, tag, largeUrl } = this.props;
+    const { url, tag, largeImageUrl } = this.props;
     return (
       <>
         <GalleryItem>
           <ItemImage src={url} alt={tag} onClick={this.toggleModal} />
         </GalleryItem>
-        {this.state.isOpen && <Modal largeUrl={largeUrl} tag={tag} />}
+        {this.state.showModal && (
+          <Modal
+            largeImageUrl={largeImageUrl}
+            tag={tag}
+            toggleModal={this.toggleModal}
+          />
+        )}
       </>
     );
   }

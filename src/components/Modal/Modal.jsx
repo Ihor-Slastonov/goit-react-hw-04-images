@@ -1,11 +1,41 @@
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { Overlay, ModalBox } from './Modal.styled';
 
-export const Modal = ({ tag, largeUrl }) => {
-  return (
-    <Overlay>
-      <ModalBox>
-        <img src={largeUrl} alt={tag} />
-      </ModalBox>
-    </Overlay>
-  );
-};
+export class Modal extends Component {
+  static propTypes = {
+    tag: PropTypes.string.isRequired,
+    largeImageUrl: PropTypes.string.isRequired,
+    toggleModal: PropTypes.func.isRequired,
+  };
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.onKeyClose);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyClose);
+  }
+
+  onKeyClose = e => {
+    if (e.code === 'Escape') {
+      this.props.toggleModal();
+    }
+  };
+
+  onOverlayClick = e => {
+    if (e.target === e.currentTarget) {
+      return this.props.toggleModal();
+    }
+  };
+
+  render() {
+    const { tag, largeImageUrl } = this.props;
+    return (
+      <Overlay onClick={this.onOverlayClick} id="overlay">
+        <ModalBox>
+          <img src={largeImageUrl} alt={tag} />
+        </ModalBox>
+      </Overlay>
+    );
+  }
+}

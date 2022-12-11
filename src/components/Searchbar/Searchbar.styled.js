@@ -47,7 +47,6 @@ export const SearchBtn = styled.button`
   }
 `;
 
-
 export const SearchInput = styled.input`
   display: inline-block;
   width: 100%;

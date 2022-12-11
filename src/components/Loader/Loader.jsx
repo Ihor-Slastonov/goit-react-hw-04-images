@@ -5,16 +5,16 @@ const override = {
 };
 
 export const Loader = () => {
-    return (
-      <>
-        <ClipLoader
-          color={'#006cfc'}
-          loading={true}
-          cssOverride={override}
-          size={150}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
-      </>
-    );
-}
+  return (
+    <>
+      <ClipLoader
+        color={'#006cfc'}
+        loading={true}
+        cssOverride={override}
+        size={150}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    </>
+  );
+};
