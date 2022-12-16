@@ -52,11 +52,9 @@ export const ImageGallery = ({ value }) => {
 
   const onLoadMore = async () => {
     try {
-      const searchValue = value;
-      const page = pageNumber;
       setIsLoading(true);
 
-      const images = await fetchImages(page, searchValue);
+      const images = await fetchImages(pageNumber, value);
       if (images.hits.length === 0) {
         return toast.error('Please try something else');
       }
@@ -67,7 +65,7 @@ export const ImageGallery = ({ value }) => {
         toast("Oh, but that's all?! But you can try: 'Dog🐶'");
         return;
       }
-      setImages(prevState => [...prevState.images, ...images.hits]);
+      setImages(prevState => [...prevState, ...images.hits]);
       setPageNumber(prevState => prevState + 1);
     } catch (error) {
       console.log(error);
