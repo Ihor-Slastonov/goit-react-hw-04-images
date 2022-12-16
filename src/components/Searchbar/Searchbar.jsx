@@ -1,58 +1,47 @@
 import PropTypes from 'prop-types';
 
-import { Component } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { BsSearch } from 'react-icons/bs';
 
 import { Header, SearchForm, SearchBtn, SearchInput } from './Searchbar.styled';
 
-export class SearchBar extends Component {
-  static propTypes = {
-    onSubmit: PropTypes.func.isRequired,
+export const SearchBar = ({ onSubmit }) => {
+  const [searchValue, setSearchValue] = useState('');
+
+  const onInputChange = e => {
+    setSearchValue(e.currentTarget.value);
   };
 
-  state = {
-    searchValue: '',
-  };
-
-  onInputChange = e => {
-    this.setState({
-      searchValue: e.currentTarget.value,
-    });
-  };
-
-  onSubmit = e => {
-    const { searchValue } = this.state;
-
+  const onSearchSubmit = e => {
     e.preventDefault();
-
     if (searchValue.trim() === '') {
-      toast.error('Ooops! It cannot be empty field');
-      return;
+      return toast.error('Ooops! It cannot be empty field');
     }
-
-    this.props.onSubmit(searchValue.trim());
-    this.setState({ searchValue: '' });
+    onSubmit(searchValue);
+    setSearchValue('');
   };
 
-  render() {
-    return (
-      <Header>
-        <SearchForm onSubmit={this.onSubmit}>
-          <SearchBtn type="submit">
-            <BsSearch size={22} />
-          </SearchBtn>
+  return (
+    <Header>
+      <SearchForm onSubmit={onSearchSubmit}>
+        <SearchBtn type="submit">
+          <BsSearch size={22} />
+        </SearchBtn>
 
-          <SearchInput
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            onChange={this.onInputChange}
-            value={this.state.searchValue}
-          />
-        </SearchForm>
-      </Header>
-    );
-  }
+        <SearchInput
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          onChange={onInputChange}
+          value={searchValue}
+        />
+      </SearchForm>
+    </Header>
+  );
+};
+
+SearchBar.propTypes ={
+  onSubmit: PropTypes.string.isRequired,
 }
