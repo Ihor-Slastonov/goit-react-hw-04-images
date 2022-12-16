@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-hot-toast';
+import { BsFillArrowUpCircleFill } from 'react-icons/bs';
 
 import { fetchImages } from 'services/imageApi';
 
@@ -8,6 +9,7 @@ import { Gallery } from './ImageGallery.styled';
 import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
 import { Loader } from 'components/Loader/Loader';
 import { Button } from 'components/Button/Button';
+import ScrollToTop from 'react-scroll-up';
 
 export const ImageGallery = ({ value }) => {
   const [images, setImages] = useState(null);
@@ -91,6 +93,9 @@ export const ImageGallery = ({ value }) => {
       </Gallery>
       {isLoading && <Loader />}
       {loadMore && <Button onClick={onLoadMore} />}
+      <ScrollToTop showUnder={250}>
+        <BsFillArrowUpCircleFill size={40} color={'#3f51b5'} />
+      </ScrollToTop>
     </>
   );
 };
