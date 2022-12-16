@@ -6,7 +6,7 @@ import { ImageGallery } from 'components/ImageGallery/ImageGallery';
 
 export const App = () => {
   const [searchValue, setSearchValue] = useState('');
-  
+
   return (
     <>
       <SearchBar onSubmit={setSearchValue} />

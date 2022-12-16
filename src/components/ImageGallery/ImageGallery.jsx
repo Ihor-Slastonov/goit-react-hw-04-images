@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-hot-toast';
 
@@ -9,118 +9,94 @@ import { ImageGalleryItem } from './ImageGalleryItem/ImageGalleryItem';
 import { Loader } from 'components/Loader/Loader';
 import { Button } from 'components/Button/Button';
 
-export class ImageGallery extends Component {
-  static propTypes = {
-    value: PropTypes.string.isRequired,
-  };
+export const ImageGallery = ({ value }) => {
+  const [images, setImages] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadMore, setLoadMore] = useState(false);
+  const [pageNumber, setPageNumber] = useState(1);
 
-  state = {
-    images: null,
-    isLoading: false,
-    loadMore: false,
-    pageNumber: 1,
-  };
-
-  async componentDidUpdate(prevProps, prevState) {
-    if (prevProps.value !== this.props.value) {
+  useEffect(() => {
+    async function fetchGallery() {
       try {
-        this.setState({
-          isLoading: true,
-          images: null,
-          loadMore: false,
-          pageNumber: 1,
-        });
-        await this.fetchGallery();
+        const images = await fetchImages(1, value);
+        if (images.hits.length === 0) {
+          return toast.error(
+            "Sorry, images not found😥... But you can try: 'Jam🍯'"
+          );
+        }
+        if (images.hits.length > 0 && images.totalHits <= 12) {
+          setImages(images.hits);
+          return toast("Oh, but that's all?! But you can try: 'Dog🐶'");
+        }
+        if (images.hits.length > 0 && images.totalHits > 12) {
+          setImages(images.hits);
+          setLoadMore(true);
+          setPageNumber(prevState => prevState + 1);
+          return;
+        }
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     }
-  }
-
-  fetchGallery = async () => {
-    try {
-      const searchValue = this.props.value;
-      const page = 1;
-
-      const images = await fetchImages(page, searchValue);
-      if (images.hits.length === 0) {
-        return toast.error(
-          "Sorry, images not found😥... But you can try: 'Jam🍯'"
-        );
-      }
-      if (images.hits.length > 0 && images.totalHits <= 12) {
-        this.setState({
-          images: images.hits,
-        });
-        return toast("Oh, but that's all?! But you can try: 'Dog🐶'");
-      }
-      if (images.hits.length > 0 && images.totalHits > 12) {
-        this.setState(prevState => ({
-          images: images.hits,
-          loadMore: true,
-          pageNumber: prevState.pageNumber + 1,
-        }));
-        return;
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      this.setState({ isLoading: false });
+    if (value === '') {
+      return;
     }
-  };
+    setIsLoading(true);
+    setImages(null);
+    setLoadMore(false);
+    setPageNumber(1);
+    fetchGallery();
+  }, [value]);
 
-  onLoadMore = async () => {
+  const onLoadMore = async () => {
     try {
-      const searchValue = this.props.value;
-      const page = this.state.pageNumber;
-      this.setState({ isLoading: true });
+      const searchValue = value;
+      const page = pageNumber;
+      setIsLoading(true);
 
       const images = await fetchImages(page, searchValue);
       if (images.hits.length === 0) {
         return toast.error('Please try something else');
       }
       if (images.hits.length < 12) {
-        this.setState(prevState => ({
-          images: [...prevState.images, ...images.hits],
-          loadMore: false,
-          pageNumber: 1,
-        }));
+        setImages(prevState => [...prevState, ...images.hits]);
+        setLoadMore(false);
+        setPageNumber(1);
         toast("Oh, but that's all?! But you can try: 'Dog🐶'");
         return;
       }
-
-      this.setState(prevState => ({
-        images: [...prevState.images, ...images.hits],
-        pageNumber: prevState.pageNumber + 1,
-      }));
+      setImages(prevState => [...prevState.images, ...images.hits]);
+      setPageNumber(prevState => prevState + 1);
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(false);
     }
   };
 
-  render() {
-    const { images, isLoading, loadMore } = this.state;
+  return (
+    <>
+      <Gallery className="gallery">
+        {images &&
+          images.map(image => {
+            return (
+              <ImageGalleryItem
+                key={image.id}
+                url={image.webformatURL}
+                tag={image.tags}
+                largeImageUrl={image.largeImageURL}
+              />
+            );
+          })}
+      </Gallery>
+      {isLoading && <Loader />}
+      {loadMore && <Button onClick={onLoadMore} />}
+    </>
+  );
+};
 
-    return (
-      <>
-        <Gallery className="gallery">
-          {images &&
-            images.map(image => {
-              return (
-                <ImageGalleryItem
-                  key={image.id}
-                  url={image.webformatURL}
-                  tag={image.tags}
-                  largeImageUrl={image.largeImageURL}
-                />
-              );
-            })}
-        </Gallery>
-        {isLoading && <Loader />}
-        {loadMore && <Button onClick={this.onLoadMore} />}
-      </>
-    );
-  }
-}
+ImageGallery.propTypes = {
+  value: PropTypes.string.isRequired,
+};

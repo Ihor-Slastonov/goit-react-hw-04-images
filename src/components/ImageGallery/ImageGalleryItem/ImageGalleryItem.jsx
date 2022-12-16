@@ -5,11 +5,11 @@ import { useState } from 'react';
 import { GalleryItem, ItemImage } from './ImageGalleryItem.styled';
 
 export const ImageGalleryItem = ({ url, tag, largeImageUrl }) => {
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
 
   const toggleModal = () => {
-    setShowModal(prevModal => !prevModal)
-  }
+    setShowModal(prevModal => !prevModal);
+  };
 
   return (
     <>
